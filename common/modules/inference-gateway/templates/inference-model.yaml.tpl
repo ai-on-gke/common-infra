@@ -8,3 +8,10 @@ spec:
   criticality: ${CRITICALITY}
   poolRef:
     name: ${INFERENCE_POOL_NAME}
+  %{ if length(TARGET_MODELS) != 0 }
+  targetModels:
+  %{ for tm in TARGET_MODELS }
+  - name: ${tm.name}
+    weight: ${tm.weight}
+  %{ endfor }
+  %{ endif }

@@ -6,13 +6,16 @@ metadata:
 spec:
   parentRefs:
   - name: ${GATEWAY_NAME}
+  %{ if HOSTNAME != "" }
+  hostnames:
+  - ${HOSTNAME}
+  %{ endif }
   rules:
   - matches:
     - path:
         type: PathPrefix
-        value: /v1/completions
-        #value: /
+        value: ${PATH}
     backendRefs:
-    - name: ${INFERENCE_POOL_NAME}
+    - kind: InferencePool
       group: inference.networking.x-k8s.io
-      kind: InferencePool
+      name: ${INFERENCE_POOL_NAME}
