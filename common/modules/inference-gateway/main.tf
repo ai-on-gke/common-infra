@@ -1,3 +1,27 @@
+resource "local_file" "gateway" {
+  content = templatefile(
+    "${path.module}/templates/gateway.yaml.tpl",
+    {
+      NAME              = var.gateway_name
+      NAMESPACE         = var.kubernetes_namespace
+      GATEWAY_CLASS     = "gke-l7-regional-external-managed"
+      MANAGED_CERT_NAME = var.tls_certificate_name
+      IP_ADDRESS_NAME   = var.ip_address_name
+    }
+  )
+  filename = "${var.rendered_templates_path}/gateway.yaml"
+}
+
+resource "kubernetes_manifest" "gateway" {
+  manifest = provider::kubernetes::manifest_decode(local_file.gateway.content)
+  lifecycle {
+    replace_triggered_by = [
+      local_file.gateway.content
+    ]
+  }
+}
+
+
 resource "helm_release" "inference_pool" {
   name       = var.inference_pool_name
   repository = "oci://registry.k8s.io/gateway-api-inference-extension/charts"
@@ -21,6 +45,9 @@ resource "helm_release" "inference_pool" {
       }
     ]
   )
+  depends_on = [
+    kubernetes_manifest.gateway,
+  ]
 }
 
 
@@ -53,28 +80,6 @@ resource "kubernetes_manifest" "inference_model" {
 }
 
 
-resource "local_file" "gateway" {
-  content = templatefile(
-    "${path.module}/templates/gateway.yaml.tpl",
-    {
-      NAME              = var.gateway_name
-      NAMESPACE         = var.kubernetes_namespace
-      GATEWAY_CLASS     = "gke-l7-regional-external-managed"
-      MANAGED_CERT_NAME = var.tls_certificate_name
-      IP_ADDRESS_NAME   = var.ip_address_name
-    }
-  )
-  filename = "${var.rendered_templates_path}/gateway.yaml"
-}
-
-resource "kubernetes_manifest" "gateway" {
-  manifest = provider::kubernetes::manifest_decode(local_file.gateway.content)
-  lifecycle {
-    replace_triggered_by = [
-      local_file.gateway.content
-    ]
-  }
-}
 
 
 resource "local_file" "http_route" {
