@@ -49,6 +49,10 @@ variable "inference_pool_target_port" {
   type = number
 }
 
+variable "crds_version" {
+  type = string
+}
+
 variable "inference_models" {
   type = list(object({
     name        = string

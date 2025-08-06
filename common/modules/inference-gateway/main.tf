@@ -2,7 +2,7 @@ resource "helm_release" "inference_pool" {
   name       = var.inference_pool_name
   repository = "oci://registry.k8s.io/gateway-api-inference-extension/charts"
   chart      = "inferencepool"
-  version    = "v0.3.0"
+  version    = var.crds_version
   set = concat(
     [
       {
