@@ -95,7 +95,7 @@ variable "cluster_labels" {
 
 variable "kubernetes_version" {
   type    = string
-  default = "1.30"
+  default = "1.31"
 }
 
 variable "release_channel" {
