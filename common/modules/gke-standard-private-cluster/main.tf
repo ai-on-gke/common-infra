@@ -18,7 +18,7 @@ locals {
 
 module "gke" {
   source                               = "terraform-google-modules/kubernetes-engine/google//modules/private-cluster"
-  version                              = "33.0.0"
+  version                              = "43.0.0"
   project_id                           = var.project_id
   regional                             = var.cluster_regional
   name                                 = var.cluster_name
