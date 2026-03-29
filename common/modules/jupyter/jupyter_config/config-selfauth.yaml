@@ -26,6 +26,21 @@ hub:
     name: us-docker.pkg.dev/ai-on-gke/jupyterhub-authentication-class/jupyter-auth-class
     # This is the timestamp of the image, we should avoid using 'latest'
     tag: 'sample-public-image-1741648202'
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+  extraPodSpec:
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+  extraVolumes:
+    - name: hub-tmp
+      emptyDir: {}
+  extraVolumeMounts:
+    - name: hub-tmp
+      mountPath: /tmp
   labels:
     ${indent(4, chomp(jsonencode(additional_labels)))}
   config:
@@ -55,6 +70,15 @@ proxy:
   labels:
     ${indent(4, chomp(jsonencode(additional_labels)))}
   chp:
+    containerSecurityContext:
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]
+    extraPodSpec:
+      securityContext:
+        seccompProfile:
+          type: RuntimeDefault
     networkPolicy:
       enabled: false
   service:
