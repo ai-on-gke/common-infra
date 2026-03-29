@@ -79,6 +79,12 @@ resource "kubernetes_deployment" "inference_deployment" {
       }
 
       spec {
+        security_context {
+          seccomp_profile {
+            type = "RuntimeDefault"
+          }
+        }
+
         init_container {
           name    = "download-model"
           image   = "google/cloud-sdk:473.0.0-alpine"
@@ -144,6 +150,20 @@ resource "kubernetes_deployment" "inference_deployment" {
             read_only  = "true"
           }
 
+          volume_mount {
+            mount_path = "/tmp"
+            name       = "tmp-dir"
+          }
+
+          security_context {
+            allow_privilege_escalation = false
+            read_only_root_filesystem  = true
+            run_as_non_root            = true
+            capabilities {
+              drop = ["ALL"]
+            }
+          }
+
           #liveness_probe {
           #http_get {
           #path = "/"
@@ -174,6 +194,11 @@ resource "kubernetes_deployment" "inference_deployment" {
 
         volume {
           name = "model-storage"
+          empty_dir {}
+        }
+
+        volume {
+          name = "tmp-dir"
           empty_dir {}
         }
 
