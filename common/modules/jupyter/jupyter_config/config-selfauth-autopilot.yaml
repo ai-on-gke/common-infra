@@ -65,6 +65,15 @@ hub:
 prePuller:
   hook:
     enabled: false
+  containerSecurityContext:
+    allowPrivilegeEscalation: false
+    readOnlyRootFilesystem: true
+    capabilities:
+      drop: ["ALL"]
+  extraPodSpec:
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
 
 proxy:
   labels:
