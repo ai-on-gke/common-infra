@@ -25,7 +25,7 @@ hub:
   image:
     name: us-docker.pkg.dev/ai-on-gke/jupyterhub-authentication-class/jupyter-auth-class
     # This is the timestamp of the image, we should avoid using 'latest'
-    tag: 'sample-public-image-1741648202'
+    tag: 'sample-public-image-1741648202@sha256:18997be14dc393ecd70a2cfe7909187f4e3c8d26136ba7970c1699745b08f364'
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -65,6 +65,9 @@ hub:
 prePuller:
   hook:
     enabled: false
+  image:
+    name: docker.io/jupyterhub/k8s-image-awaiter
+    tag: '3.3.8@sha256:db740c08f3e0fe85300b6bee6b08a65290e3293a94236bf4fdbab8999176e88c'
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
@@ -79,6 +82,9 @@ proxy:
   labels:
     ${indent(4, chomp(jsonencode(additional_labels)))}
   chp:
+    image:
+      name: docker.io/jupyterhub/configurable-http-proxy
+      tag: '4.6.2@sha256:74680db2fa7d0484785aad54fd371ae2856d5a446e2032bb0b1ff20c290809da'
     containerSecurityContext:
       allowPrivilegeEscalation: false
       readOnlyRootFilesystem: true
