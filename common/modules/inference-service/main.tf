@@ -79,9 +79,15 @@ resource "kubernetes_deployment" "inference_deployment" {
       }
 
       spec {
+        security_context {
+          seccomp_profile {
+            type = "RuntimeDefault"
+          }
+        }
+
         init_container {
           name    = "download-model"
-          image   = "google/cloud-sdk:473.0.0-alpine"
+          image   = "google/cloud-sdk:473.0.0-alpine@sha256:53765a0f52d178e28ba0c1d1e526f02018ab18e19fddfc42abe2ba36d5e3d0df"
           command = ["gcloud", "storage", "cp", "--recursive", "gs://vertex-model-garden-public-us/mistralai/Mistral-7B-Instruct-v0.1/", "/model-data/"]
           volume_mount {
             mount_path = "/model-data"
@@ -89,7 +95,7 @@ resource "kubernetes_deployment" "inference_deployment" {
           }
         }
         container {
-          image = "ghcr.io/huggingface/text-generation-inference:1.4.3"
+          image = "ghcr.io/huggingface/text-generation-inference:1.4.3@sha256:18ed856bc9b43920eae571bdcff640ebc7c49df56b7233270dbff6a23eb4e27f"
           name  = "mistral-7b-instruct"
 
           port {
@@ -144,6 +150,20 @@ resource "kubernetes_deployment" "inference_deployment" {
             read_only  = "true"
           }
 
+          volume_mount {
+            mount_path = "/tmp"
+            name       = "tmp-dir"
+          }
+
+          security_context {
+            allow_privilege_escalation = false
+            read_only_root_filesystem  = true
+            run_as_non_root            = true
+            capabilities {
+              drop = ["ALL"]
+            }
+          }
+
           #liveness_probe {
           #http_get {
           #path = "/"
@@ -174,6 +194,11 @@ resource "kubernetes_deployment" "inference_deployment" {
 
         volume {
           name = "model-storage"
+          empty_dir {}
+        }
+
+        volume {
+          name = "tmp-dir"
           empty_dir {}
         }
 
