@@ -65,18 +65,16 @@ hub:
 prePuller:
   hook:
     enabled: false
-  image:
-    name: docker.io/jupyterhub/k8s-image-awaiter
-    tag: '3.3.8@sha256:db740c08f3e0fe85300b6bee6b08a65290e3293a94236bf4fdbab8999176e88c'
+    image:
+      name: docker.io/jupyterhub/k8s-image-awaiter
+      tag: '3.3.8@sha256:db740c08f3e0fe85300b6bee6b08a65290e3293a94236bf4fdbab8999176e88c'
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
     capabilities:
       drop: ["ALL"]
-  extraPodSpec:
-    securityContext:
-      seccompProfile:
-        type: RuntimeDefault
+    seccompProfile:
+      type: RuntimeDefault
 
 proxy:
   labels:
