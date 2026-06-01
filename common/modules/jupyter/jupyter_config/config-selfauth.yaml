@@ -26,15 +26,17 @@ hub:
     name: us-docker.pkg.dev/ai-on-gke/jupyterhub-authentication-class/jupyter-auth-class
     # This is the timestamp of the image, we should avoid using 'latest'
     tag: 'sample-public-image-1741648202@sha256:18997be14dc393ecd70a2cfe7909187f4e3c8d26136ba7970c1699745b08f364'
+  podSecurityContext:
+    fsGroup: 1000
+    seccompProfile:
+      type: RuntimeDefault
   containerSecurityContext:
     allowPrivilegeEscalation: false
     readOnlyRootFilesystem: true
+    runAsUser: 1000
+    runAsGroup: 1000
     capabilities:
       drop: ["ALL"]
-  extraPodSpec:
-    securityContext:
-      seccompProfile:
-        type: RuntimeDefault
   extraVolumes:
     - name: hub-tmp
       emptyDir: {}
